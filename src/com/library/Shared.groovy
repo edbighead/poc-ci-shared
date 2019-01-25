@@ -27,11 +27,11 @@ class Shared implements Serializable{
 
     def setVersion (major,minor,incremental) {
         if (major) {
-            mvn("build-helper:parse-version versions:set -DnewVersion=\\\${parsedVersion.nextMajorVersion}.\\\${parsedVersion.minorVersion}.\\\${parsedVersion.incrementalVersion} versions:commit")
+            mvn("build-helper:parse-version versions:set -DnewVersion=\\\${parsedVersion.nextMajorVersion}.0.0 versions:commit")
         }
 
         if (minor) {
-            mvn("build-helper:parse-version versions:set -DnewVersion=\\\${parsedVersion.majorVersion}.\\\${parsedVersion.nextMinorVersion}.\\\${parsedVersion.incrementalVersion} versions:commit")
+            mvn("build-helper:parse-version versions:set -DnewVersion=\\\${parsedVersion.majorVersion}.\\\${parsedVersion.nextMinorVersion}.0 versions:commit")
         }
 
         if (incremental) {
@@ -41,7 +41,7 @@ class Shared implements Serializable{
     }
 
     def pushIncrementedVersion(branch){
-        script.sshagent(['github-key']) { 
+        script.sshagent(['github-key']) {
             script.sh ("git add . && git commit -m 'Increment version' && git push --set-upstream origin ${branch}")
             script.pom = script.readMavenPom file: 'pom.xml'
             script.sh ("git tag ${script.pom.version} && git push --tags")
