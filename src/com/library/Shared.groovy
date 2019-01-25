@@ -39,4 +39,12 @@ class Shared implements Serializable{
         }
 
     }
+
+    def pushIncrementedVersion(branch){
+        script.sshagent(['github-key']) { 
+            script.sh ("git add . && git commit -m 'Increment version' && git push --set-upstream origin ${branch}")
+            script.pom = script.readMavenPom file: 'pom.xml'
+            script.sh ("git tag ${script.pom.version} && git push --tags")
+        }
+    }
 }
