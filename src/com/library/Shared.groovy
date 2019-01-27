@@ -47,4 +47,14 @@ class Shared implements Serializable{
             script.sh ("git tag ${script.pom.version} && git push --tags")
         }
     }
+
+    def download(groupid,artifactid,version,ext,dest){
+        mvn("dependency:get -DremoteRepositories=http://nexus:8081/repository/maven-releases -DgroupId=${groupid} -DartifactId=${artifactid} -Dversion=${version} -Dpackaging=${ext} -Dtransitive=false -Ddest=${dest}")
+    }
+
+    def downloadHelloService (version) {
+        download("com.boxfuse.samples", "hello", version, "war", "deploy/hello.war")
+    }
+
+
 }
