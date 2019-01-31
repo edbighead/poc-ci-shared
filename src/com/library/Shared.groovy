@@ -24,6 +24,20 @@ class Shared implements Serializable{
             script.sh "mvn ${goal}"
         }
     }
+    
+    def sonar(projectKey,exclusions) {
+        script.withSonarQubeEnv('sonar') {
+            mvn ("sonar:sonar -Dsonar.projectKey=${projectKey} \
+                              -Dsonar.exclusions=${exclusions}")
+        }
+    }
+
+    def qualityGate() {
+        def qualitygate = script.waitForQualityGate()
+        if (qualitygate.status != "OK") {
+         script.error "Pipeline aborted due to quality gate status: ${qualitygate.status}"
+      }
+    }
 
     def setVersion (major,minor,incremental) {
         if (major) {
